@@ -1,0 +1,6 @@
+/bin/
+/vendor/
+*.log
+*.zip
+.env
+/node_modules/

@@ -1,1 +1,0 @@
-// load_test_k6.js placeholder

@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      BASE_URL: "http://localhost:8080"
+      DB_TYPE: "postgres"
+      REDIS_ADDR: "redis:6379"
+      POSTGRES_DSN: "postgres://shortuser:shortpass@postgres:5432/shortdb?sslmode=disable"
+      CASSANDRA_HOSTS: "cassandra"
+      CASSANDRA_KEYSPACE: "urlshort"
+      MACHINE_ID: "1"
+    depends_on:
+      - redis
+      - cassandra
+      - postgres
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  cassandra:
+    image: cassandra:5
+    environment:
+      CASSANDRA_CLUSTER_NAME: "URLCluster"
+    ports:
+      - "9042:9042"
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: shortuser
+      POSTGRES_PASSWORD: shortpass
+      POSTGRES_DB: shortdb
+    ports:
+      - "5432:5432"
